@@ -1,0 +1,13 @@
+aiohttp
+aiohttp-socks
+python-dotenv
+beautifulsoup4
+lxml
+python-socks
+pycryptodome
+cryptography
+PyNaCl
+Pillow
+curl_cffi
+psutil
+pywidevine
