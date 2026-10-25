@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>EasyProxy Admin</title>
+<style>
+    :root {
+        --bg-primary: #0a0a1a;
+        --bg-secondary: #12122a;
+        --bg-tertiary: #1a1a3e;
+        --text-primary: #f0f0f8;
+        --text-secondary: #a0a0c0;
+        --text-muted: #6b6b8d;
+        --surface-glass: rgba(255,255,255,0.03);
+        --accent-glow: rgba(99,102,241,0.3);
+    }
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body {
+        font-family: 'Inter', system-ui, -apple-system, sans-serif;
+        background: var(--bg-primary);
+        color: var(--text-primary);
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+    }
+    #particles {
+        position: fixed; inset: 0; z-index: 0;
+        pointer-events: none;
+    }
+    .login-card {
+        position: relative; z-index: 1;
+        background: var(--bg-secondary);
+        border: 1px solid var(--border-primary);
+        border-radius: 20px;
+        padding: 2.5rem;
+        width: 90%;
+        max-width: 400px;
+        text-align: center;
+        backdrop-filter: blur(12px);
+    }
+    .login-card h1 {
+        font-size: 1.5rem;
+        font-weight: 700;
+        margin-bottom: 0.25rem;
+        background: linear-gradient(135deg, #6366f1, #a855f7);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+    .login-card p {
+        color: var(--text-muted);
+        font-size: 0.85rem;
+        margin-bottom: 1.5rem;
+    }
+    .login-card input {
+        width: 100%;
+        padding: 12px 16px;
+        border: 1px solid var(--border-primary);
+        border-radius: 12px;
+        background: var(--bg-tertiary);
+        color: var(--text-primary);
+        font-size: 1rem;
+        outline: none;
+        transition: border-color 0.2s;
+        margin-bottom: 1rem;
+    }
+    .login-card input:focus {
+        border-color: var(--accent-primary);
+        box-shadow: 0 0 0 3px var(--accent-glow);
+    }
+    .login-card button {
+        width: 100%;
+        padding: 12px;
+        border: none;
+        border-radius: 12px;
+        background: linear-gradient(135deg, #6366f1, #a855f7);
+        color: #fff;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: opacity 0.2s, transform 0.1s;
+    }
+    .login-card button:hover { opacity: 0.9; }
+    .login-card button:active { transform: scale(0.98); }
+    .login-card .error {
+        color: var(--accent-error);
+        font-size: 0.85rem;
+        margin-top: 0.75rem;
+        display: none;
+    }
+</style>
+    <link rel="stylesheet" href="/static/ep-ui.css?v={{APP_VERSION}}">
+</head>
+<body>
+<canvas id="particles"></canvas>
+<div class="login-card">
+    <h1>EasyProxy</h1>
+    <p>Inserisci la password per accedere</p>
+    <input type="password" id="password" placeholder="Password" autofocus onkeydown="if(event.key==='Enter')login()">
+    <button onclick="login()">Accedi</button>
+    <div id="error" class="error"></div>
+</div>
+<script>
+async function login() {
+    const pwd = document.getElementById('password').value;
+    const err = document.getElementById('error');
+    if (!pwd) { err.textContent='Inserisci la password'; err.style.display='block'; return; }
+    try {
+        const r = await fetch('/api/admin/login', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({password:pwd})});
+        if (!r.ok) { err.textContent='Password errata'; err.style.display='block'; return; }
+        window.location.href = '/admin';
+    } catch(e) { err.textContent='Errore di connessione'; err.style.display='block'; }
+}
+</script>
+<script src="/static/ep-particles.js?v={{APP_VERSION}}"></script>
+<script src="/static/ep-nav.js?v={{APP_VERSION}}"></script>
+</body>
+</html>

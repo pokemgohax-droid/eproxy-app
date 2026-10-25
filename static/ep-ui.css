@@ -1,0 +1,148 @@
+/* EasyProxy shared UI layer.
+   Loaded after each page's inline <style>, so every selector here uses :where()
+   (specificity 0): page styles always win, this only fills the gaps.
+   Motion tokens follow the transitions.dev scale. */
+
+:where(:root) {
+    --ep-nav-h: 52px;
+
+    --ep-duration-quick: 150ms;
+    --ep-duration-fast: 250ms;
+
+    --ep-ease-smooth-out: cubic-bezier(0.22, 1, 0.36, 1);
+
+    /* Palette shared by every panel (hoisted from the per-page :root blocks). */
+    --surface: rgba(255, 255, 255, 0.03);
+    --surface-elevated: rgba(255, 255, 255, 0.1);
+    --surface-glass: rgba(255, 255, 255, 0.06);
+    --primary-gradient: linear-gradient(135deg, #6366f1 0%, #a855f7 50%, #ec4899 100%);
+    --secondary-gradient: linear-gradient(135deg, #06b6d4 0%, #3b82f6 100%);
+    --neon-gradient: linear-gradient(90deg, #06b6d4, #a855f7, #ec4899, #a855f7, #06b6d4);
+    --accent-primary: #6366f1;
+    --accent-success: #10b981;
+    --accent-warning: #f59e0b;
+    --accent-error: #ef4444;
+    --accent-info: #06b6d4;
+    --neon-green: #39ff14;
+    --text-accent: #e4e4e7;
+    --border-accent: rgba(255, 255, 255, 0.15);
+    --border-primary: rgba(255, 255, 255, 0.08);
+    --glow-primary: 0 0 30px rgba(99, 102, 241, 0.25);
+    --glow-secondary: 0 0 40px rgba(168, 85, 247, 0.3);
+    --shadow-dark: 0 25px 60px -15px rgba(0, 0, 0, 0.8);
+    --transition-fast: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-normal: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --border-radius: 16px;
+    --border-radius-large: 24px;
+}
+
+/* Focus: no panel defines :focus-visible, so keyboard users get no ring. */
+:where(a, button, input, select, textarea, summary, [tabindex], [contenteditable]):focus-visible {
+    outline: 2px solid var(--accent-primary, #818cf8);
+    outline-offset: 2px;
+}
+
+:where(:focus:not(:focus-visible)) {
+    outline: none;
+}
+
+/* Motion: no template honours the OS setting. */
+@media (prefers-reduced-motion: reduce) {
+    :where(*, *::before, *::after) {
+        animation-duration: 1ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 1ms !important;
+        scroll-behavior: auto !important;
+    }
+}
+
+/* Scrolling: smooth anchors, offset under the fixed .ep-nav, themed scrollbars. */
+:where(html) {
+    scroll-behavior: smooth;
+    scroll-padding-top: calc(var(--ep-nav-h) + 16px);
+}
+
+:where(*) {
+    scrollbar-width: thin;
+    scrollbar-color: var(--border-accent, rgba(255, 255, 255, 0.15)) transparent;
+}
+
+:where(*::-webkit-scrollbar) {
+    width: 10px;
+    height: 10px;
+}
+
+:where(*::-webkit-scrollbar-track) {
+    background: transparent;
+}
+
+:where(*::-webkit-scrollbar-thumb) {
+    background: var(--surface-elevated, rgba(255, 255, 255, 0.12));
+    border: 2px solid transparent;
+    border-radius: 999px;
+    background-clip: content-box;
+}
+
+:where(*::-webkit-scrollbar-thumb:hover) {
+    background: var(--border-accent, rgba(255, 255, 255, 0.24));
+    background-clip: content-box;
+}
+
+:where(:target) {
+    scroll-margin-top: calc(var(--ep-nav-h) + 16px);
+}
+
+/* Forms: no panel sets accent-color, placeholder contrast or tap behaviour. */
+:where(::placeholder) {
+    color: var(--text-secondary, #a1a1aa);
+    opacity: 1;
+}
+
+:where(input, select, textarea) {
+    accent-color: var(--accent-primary, #6366f1);
+    touch-action: manipulation;
+}
+
+:where(textarea) {
+    resize: vertical;
+}
+
+:where(button, [role="button"], summary, a) {
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+}
+
+:where(:disabled, [aria-disabled="true"]) {
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+:where([aria-busy="true"]) {
+    cursor: progress;
+}
+
+/* Text selection is invisible on the dark palette today. */
+:where(::selection) {
+    background: var(--accent-primary, #6366f1);
+    color: #fff;
+}
+
+:where(abbr[title]) {
+    text-decoration: underline dotted;
+    cursor: help;
+}
+
+/* Interaction: colour/transform changes snap instead of easing on the token scale. */
+:where(a, button, [role="button"], summary, .btn, .card, .glass-card) {
+    transition: background-color var(--ep-duration-quick) var(--ep-ease-smooth-out),
+        border-color var(--ep-duration-quick) var(--ep-ease-smooth-out),
+        color var(--ep-duration-quick) var(--ep-ease-smooth-out),
+        box-shadow var(--ep-duration-fast) var(--ep-ease-smooth-out),
+        transform var(--ep-duration-fast) var(--ep-ease-smooth-out);
+}
+
+@media (hover: hover) and (pointer: fine) {
+    :where(.card, .glass-card):hover {
+        transform: translateY(-2px);
+    }
+}
